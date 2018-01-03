@@ -1,12 +1,12 @@
 ---
-title: 本のタイトル
-abstract: 本の概要
-circle: サークル名
-author: 本の作者
-comiket: コミケ
-year: 出版年
-publisher: 印刷会社で印刷製本
+title: 今更Eagle7のファイル構造を研究してみた
+abstract: きっとN番煎じ
+circle: KY技研
+author: "@_K4UKI_"
+comiket: 技術書典4
+year: 2018
+publisher: キンコーズオンラインで印刷製本（予定）
 docrevision: "1.0"
-# front: images/front-image.png
+front: images/animal-washi.png
 verbcolored: false
 ...
