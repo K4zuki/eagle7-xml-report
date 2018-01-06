@@ -6,7 +6,7 @@
 違いないのですが、あえてN番煎じの内容を書きます・した。主に筆者自身のためです。
 
 実際のファイルからXMLツリーを解析していこうとか考えてましたが早々に定義リストが
-見つかってしまったので、このまとめ本が日本語訳のうちの一つになればいいなって思います。
+見つかってしまったので、このまとめ本がDTDの日本語訳の一つになればいいなって思います。
 
 EagleはすでにAutodeskに買収されバージョンも８に上がっていますが、もし現在Eagle
 バージョン７をあえて使っている・または将来使う予定でいる方がいましたら、ちょっとだけ
@@ -16,6 +16,10 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 
 ## この本の対象のEagleバージョン {-}
 **Eagle Version 7.5.0** を対象にします。
+
+## この本のゴール {-}
+この本では、回路図ファイル(schファイル)からSVG画像を出力することをゴールとします。
+基板図・ライブラリファイルは基本的に対象外にします。
 
 ## おことわり {-}
 この本の内容は個人的なメモ程度であり、筆者は何ら責任を負わないものとします。
@@ -32,8 +36,9 @@ Microsoftの資料ページ[^ms-doc-dtd]によると、このDOCTYPE宣言によ
 **ドキュメント型定義**が指定されています。ということはこの型定義を見ればすなわち
 Eagleファイルの解析やそれに基づいたオレオレ処理ができるということです。
 
-[^ms-doc-dtd]: <https://msdn.microsoft.com/ja-jp/library/ms256059> \
-"DOCTYPE 宣言は、ドキュメントのルート要素の指定、および外部ファイル、直接宣言、またはその両者を用いたドキュメント型定義 (DTD) を指定する場所を提供します。"
+[^ms-doc-dtd]: <https://msdn.microsoft.com/ja-jp/library/ms256059> \\
+"DOCTYPE 宣言は、ドキュメントのルート要素の指定、および外部ファイル、直接宣言、
+またはその両者を用いたドキュメント型定義(DTD) を指定する場所を提供します。"
 
 ## eagle.dtdはどこにいるのか {-}
 DTDとして指定されている`eagle.dtd`のありかを探します。`eagle.dtd`でググるとElement14の
@@ -52,8 +57,57 @@ Eagleバージョン６のリリースノートを引用しているようです
 ## ライセンス条項 {-}
 eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められていますが、改変は禁止です。
 
-[doc/eagle.dtdライセンス部](data/eagle.dtd){.listingtable type=xml from=2 to=13}
+[doc/eagle.dtdライセンス部](data/eagle.dtd){.listingtable type=plain from=1 to=14}
 
 ## 型定義
-# Appendix {-}
-[doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml}
+型定義部はとりあえず後回しにします。
+
+## 描画要素定義
+### eagle {-}
+ルート要素です。`compatibility`要素（0または1回出現）、`drawing`要素（必ず、1回出現）、
+`compatibility`要素（0または1回出現）をこの順序で子要素に持ちます。
+
+|  Sub element  | Appearance |
+|---------------|------------|
+| compatibility | 0~1        |
+| drawing       | 1          |
+| compatibility | 0~1        |
+<!--  -->
+|   attribute   |    type    | required |
+|---------------|------------|----------|
+| version       | _Real_     | Yes      |
+
+[](data/eagle.dtd){.listingtable type=xml from=52 to=56}
+
+### compatibility/note {-}
+文字列要素です。
+<!-- attr=属性 -->
+#### conpatibility {-}
+
+| Sub element | Appearance |
+|-------------|------------|
+| note        | 0~         |
+
+#### note {-}
+
+|   attribute   |    type    | required |
+|---------------|------------|----------|
+| version       | _Real_     | Yes      |
+| severity      | _Severity_ | Yes      |
+
+[](data/eagle.dtd){.listingtable type=xml from=58 to=65}
+
+### drawing {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=67 to=67}
+
+### library {-}
+[](data/eagle.dtd){.listingtable type=xml from=69 to=73}
+
+### schematic {-}
+[](data/eagle.dtd){.listingtable type=xml from=75 to=79}
+
+### board {-}
+[](data/eagle.dtd){.listingtable type=xml from=89 to=92}
+<!-- # Appendix {-}
+[doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
