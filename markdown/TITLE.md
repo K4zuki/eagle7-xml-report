@@ -3,7 +3,9 @@
 この本は、筆者がCadSoft Eagle(**バージョン７**)のsch/brdファイルをCIで
 自動レンダリングしたいと考え、ファイル構造を調べた結果のレポートです。
 筆者の予想ではしかしこんなものはきっとすでにどこかの誰かがブログなりにまとめているに
-違いないのですが、あえてN番煎じの内容を書きます・した。主に筆者自身のためです。
+違いないのですが[^python-lib-exists]、あえてN番煎じの内容を書きます・した。主に筆者自身のためです。
+
+[^python-lib-exists]: https://github.com/at-wat/eagle2svg など
 
 実際のファイルからXMLツリーを解析していこうとか考えてましたが早々に定義リストが
 見つかってしまったので、このまとめ本がDTDの日本語訳の一つになればいいなって思います。
@@ -19,7 +21,7 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 
 ## この本のゴール {-}
 この本では、回路図ファイル(schファイル)からSVG画像を出力することをゴールとします。
-基板図・ライブラリファイルは基本的に対象外にします。
+レイアウトファイル(brdファイル)は基本的に対象外にします。
 
 ## おことわり {-}
 この本の内容は個人的なメモ程度であり、筆者は何ら責任を負わないものとします。
@@ -111,6 +113,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 [](data/eagle.dtd){.listingtable type=xml from=67 to=67}
 
 ### schematic {-}
+回路図情報を持つ要素です。ブランクファイルを試しに作ったところ、`errors`と`description`以外の子要素が
+用意されるようです。それぞれの子要素はブランクまたはデフォルト値が格納されています。
 
 | Sub element | Appearance |
 |-------------|------------|
@@ -131,5 +135,6 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [](data/eagle.dtd){.listingtable type=xml from=75 to=79}
 
+[untitle.sch（抜粋）](data/untitled.sch){.listingtable type=xml from=21 to=46}
 <!-- # Appendix {-}
 [doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
