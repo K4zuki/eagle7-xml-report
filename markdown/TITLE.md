@@ -83,6 +83,7 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 文字列要素です。
 <!-- attr=属性 -->
 #### conpatibility {-}
+`eagle`タグに書かれたものと異なるバージョンのEagleでファイルを開いたり編集した場合に更新される要素と思われます。
 
 | Sub element | Appearance |
 |-------------|------------|
@@ -98,16 +99,37 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 [](data/eagle.dtd){.listingtable type=xml from=58 to=65}
 
 ### drawing {-}
+コアの要素です。設定情報と`library/schematic/board`のいずれかを子要素に持ちます。
+
+|          Sub element          | Appearance |
+|-------------------------------|------------|
+| settings                      | 0~1        |
+| grid                          | 0~1        |
+| layers                        | 1          |
+| library or schematic or board | 1          |
 
 [](data/eagle.dtd){.listingtable type=xml from=67 to=67}
 
-### library {-}
-[](data/eagle.dtd){.listingtable type=xml from=69 to=73}
-
 ### schematic {-}
+
+| Sub element | Appearance |
+|-------------|------------|
+| description | 0~1        |
+| libraries   | 0~1        |
+| attributes  | 0~1        |
+| variantdefs | 0~1        |
+| classes     | 0~1        |
+| modules     | 0~1        |
+| parts       | 0~1        |
+| sheets      | 0~1        |
+| errors      | 0~1        |
+<!--  -->
+| attribute |   type   | required |
+|-----------|----------|----------|
+| xreflabel | _String_ | Optional |
+| xrefpart  | _String_ | Optional |
+
 [](data/eagle.dtd){.listingtable type=xml from=75 to=79}
 
-### board {-}
-[](data/eagle.dtd){.listingtable type=xml from=89 to=92}
 <!-- # Appendix {-}
 [doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
