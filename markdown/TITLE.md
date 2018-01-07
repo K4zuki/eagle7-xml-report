@@ -64,8 +64,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 ## 型定義
 型定義部はとりあえず後回しにします。
 
-## 描画要素定義
-### eagle {-}
+## ルート要素と直下の子要素たち
+### //eagle {-}
 ルート要素です。`compatibility`要素（0または1回出現）、`drawing`要素（必ず、1回出現）、
 `compatibility`要素（0または1回出現）をこの順序で子要素に持ちます。
 
@@ -81,17 +81,14 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [](data/eagle.dtd){.listingtable type=xml from=52 to=56}
 
-### compatibility/note {-}
-文字列要素です。
+### //eagle/compatibility {-}
+文字列要素です。`eagle`タグに書かれたものと異なるバージョンのEagleでファイルを開いたり編集した場合に更新されると思われます。
 <!-- attr=属性 -->
-#### conpatibility {-}
-`eagle`タグに書かれたものと異なるバージョンのEagleでファイルを開いたり編集した場合に更新される要素と思われます。
-
 | Sub element | Appearance |
 |-------------|------------|
 | note        | 0~         |
 
-#### note {-}
+#### //eagle/compatibility/note {-}
 
 |   attribute   |    type    | required |
 |---------------|------------|----------|
@@ -100,8 +97,9 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [](data/eagle.dtd){.listingtable type=xml from=58 to=65}
 
-### drawing {-}
-コアの要素です。設定情報と`library/schematic/board`のいずれかを子要素に持ちます。
+### //eagle/drawing {-}
+描画情報の要素です。設定情報(`settings`,`gtid`,`layers`)と`library/schematic/board`の
+いずれかを子要素に持ちます。
 
 |          Sub element          | Appearance |
 |-------------------------------|------------|
@@ -112,9 +110,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [](data/eagle.dtd){.listingtable type=xml from=67 to=67}
 
-### schematic {-}
-回路図情報を持つ要素です。ブランクファイルを試しに作ったところ、`errors`と`description`以外の子要素が
-用意されるようです。それぞれの子要素はブランクまたはデフォルト値が格納されています。
+### //eagle/drawing/schematic {-}
+回路図情報を持つ要素です。
 
 | Sub element | Appearance |
 |-------------|------------|
@@ -135,6 +132,57 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [](data/eagle.dtd){.listingtable type=xml from=75 to=79}
 
+ブランクファイルを試しに作ったところ、`errors`と`description`以外の子要素が
+用意されました。それぞれの子要素はブランクまたはデフォルト値が格納されています。
+
 [untitle.sch（抜粋）](data/untitled.sch){.listingtable type=xml from=21 to=46}
+
+## 回路図要素直下の子要素たち
+### .../schematic/libraries
+librariesはlibraryの配列要素です。
+
+| Sub element | Appearance |
+|-------------|------------|
+| library     | 0~         |
+
+### .../schematic/libraries/library
+回路図に部品を置くと追加されます。追加される内容はそのライブラリまるごとではなく、
+当該部品だけ切り出しされてきます。
+
+[](data/eagle.dtd){.listingtable type=xml from=69 to=73}
+
+| Sub element | Appearance |
+|-------------|------------|
+| description | 0~1        |
+| packages    | 0~1        |
+| symbols     | 0~1        |
+| devicesets  | 0~1        |
+
+### .../schematic/sheets {-}
+sheetsはsheetの配列要素です[^non-commercial-license]。
+
+| Sub element | Appearance |
+|-------------|------------|
+| sheet       | 0~         |
+
+[^non-commercial-license]: 非営利ライセンスでは１シートしか使えないのでsheetは１度しか登場しません。
+
+#### .../schematic/sheets/sheet {-}
+
+| Sub element | Appearance |
+|-------------|------------|
+| description | 0~1        |
+| plain       | 0~1        |
+| moduleinsts | 0~1        |
+| instances   | 0~1        |
+| busses      | 0~1        |
+| nets        | 0~1        |
+
+## シート要素と直下の子要素たち
+### .../sheet/plain {-}
+### .../sheet/instances {-}
+### .../sheet/buses {-}
+### .../sheet/nets {-}
+
 <!-- # Appendix {-}
 [doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
