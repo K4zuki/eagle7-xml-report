@@ -113,6 +113,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 ### //eagle/drawing/schematic {-}
 回路図情報を持つ要素です。
 
+[](data/eagle.dtd){.listingtable type=xml from=75 to=79}
+
 | Sub element | Appearance |
 |-------------|------------|
 | description | 0~1        |
@@ -130,22 +132,22 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 | xreflabel | _String_ | Optional |
 | xrefpart  | _String_ | Optional |
 
-[](data/eagle.dtd){.listingtable type=xml from=75 to=79}
-
 ブランクファイルを試しに作ったところ、`errors`と`description`以外の子要素が
 用意されました。それぞれの子要素はブランクまたはデフォルト値が格納されています。
 
 [untitle.sch（抜粋）](data/untitled.sch){.listingtable type=xml from=21 to=46}
 
 ## 回路図要素直下の子要素たち
-### .../schematic/libraries
+### .../schematic/libraries {-}
 librariesはlibraryの配列要素です。
+
+[](data/eagle.dtd){.listingtable type=xml from=480 to=480}
 
 | Sub element | Appearance |
 |-------------|------------|
 | library     | 0~         |
 
-### .../schematic/libraries/library
+### .../schematic/libraries/library {-}
 回路図に部品を置くと追加されます。追加される内容はそのライブラリまるごとではなく、
 当該部品だけ切り出しされてきます。
 
@@ -161,13 +163,17 @@ librariesはlibraryの配列要素です。
 ### .../schematic/sheets {-}
 sheetsはsheetの配列要素です[^non-commercial-license]。
 
+[](data/eagle.dtd){.listingtable type=xml from=473 to=473}
+
 | Sub element | Appearance |
 |-------------|------------|
 | sheet       | 0~         |
 
-[^non-commercial-license]: 非営利ライセンスでは１シートしか使えないのでsheetは１度しか登場しません。
+[^non-commercial-license]: 非営利ライセンスでは１シートしか使えないのでsheetは１度だけ登場します。
 
 #### .../schematic/sheets/sheet {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=96 to=96}
 
 | Sub element | Appearance |
 |-------------|------------|
@@ -180,7 +186,48 @@ sheetsはsheetの配列要素です[^non-commercial-license]。
 
 ## シート要素と直下の子要素たち
 ### .../sheet/plain {-}
+ライブラリを使わず直接描かれたオブジェクトがまとめられます。
+
+[](data/eagle.dtd){.listingtable type=xml from=488 to=488}
+
+| Sub element | Appearance |
+|-------------|------------|
+| polygon     | 0~         |
+| wire        | 0~         |
+| text        | 0~         |
+| dimension   | 0~         |
+| circle      | 0~         |
+| rectangle   | 0~         |
+| frame       | 0~         |
+| hole        | 0~         |
+
 ### .../sheet/instances {-}
+instancesはinstanceの配列要素です。
+
+[](data/eagle.dtd){.listingtable type=xml from=486 to=486}
+
+| Sub element | Appearance |
+|-------------|------------|
+| polygon     | 0~         |
+
+#### .../sheet/instances/instance {-}
+実際に置かれた部品の情報がまとめられます。
+
+[](data/eagle.dtd){.listingtable type=xml from=384 to=393}
+
+| Sub element | Appearance |
+|-------------|------------|
+| attribute   | 0~         |
+<!--  -->
+| attribute |    type    | required | default |
+|-----------|------------|----------|---------|
+| part      | _String_   | Yes      |         |
+| gate      | _String_   | Yes      |         |
+| x         | _Coord_    | Yes      |         |
+| y         | _Coord_    | Yes      |         |
+| smashed   | _Bool_     | Optional | "no"    |
+| rot       | _Rotation_ | Optional | "R0"    |
+
 ### .../sheet/buses {-}
 ### .../sheet/nets {-}
 
