@@ -36,11 +36,14 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 1行目でXMLファイルであることが示され、2行目に**DOCTYPE宣言**があります。
 Microsoftの資料ページ[^ms-doc-dtd]によると、このDOCTYPE宣言により**ルート要素**と
 **ドキュメント型定義**が指定されています。ということはこの型定義を見ればすなわち
-Eagleファイルの解析やそれに基づいたオレオレ処理ができるということです。
+Eagleファイルの解析やそれに基づいたオレオレ処理[^extra-process]ができるということです。
 
 [^ms-doc-dtd]: <https://msdn.microsoft.com/ja-jp/library/ms256059> \\
 "DOCTYPE 宣言は、ドキュメントのルート要素の指定、および外部ファイル、直接宣言、
 またはその両者を用いたドキュメント型定義(DTD) を指定する場所を提供します。"
+[^extra-process]: brdファイルを読み込んで自動的に面付けして別ファイルに出力するプログラムとか、
+ライブラリを更新してリポジトリにプッシュするとAttributeが自動更新されるCI設定とか、
+AtomとかVSCodeのビューアプラグイン書けるとかゆめがひろがりんぐ（？）
 
 ## eagle.dtdはどこにいるのか {-}
 DTDとして指定されている`eagle.dtd`のありかを探します。`eagle.dtd`でググるとElement14の
@@ -160,6 +163,30 @@ librariesはlibraryの配列要素です。
 | symbols     | 0~1        |
 | devicesets  | 0~1        |
 
+### .../schematic/parts {-}
+
+| Sub element | Appearance |
+|-------------|------------|
+| part        | 0~         |
+
+[](data/eagle.dtd){.listingtable type=xml from=485 to=485}
+
+### .../schematic/parts/part {-}
+
+| Sub element | Appearance |
+|-------------|------------|
+| attribute   | 0~         |
+| variant     | 0~         |
+<!--  -->
+| attribute  |   type   | required | default |
+|------------|----------|----------|---------|
+| name       | _String_ | Yes      |         |
+| library    | _String_ | Yes      |         |
+| deviceset  | _String_ | Yes      |         |
+| device     | _String_ | Yes      |         |
+| technology | _String_ | Optional | ""      |
+| value      | _String_ | Optional |         |
+
 ### .../schematic/sheets {-}
 sheetsはsheetの配列要素です[^non-commercial-license]。
 
@@ -211,7 +238,10 @@ instancesはinstanceの配列要素です。
 | polygon     | 0~         |
 
 #### .../sheet/instances/instance {-}
-実際に置かれた部品の情報がまとめられます。
+実際に置かれた部品の情報がまとめられます。`part`属性は"C1"とか"R10"とか"IC2"などの呼び名が
+格納されています。`gate`は複数の部品をひとかたまりにしたライブラリを使っているときの、
+各々の部品名("G$1"など)です。`x`と`y`属性は回路図上の座標です。この座標を部品の中心として、
+`.../schematic/libraries/library`から描画していけば線分だけの部品シンボルであれば描画できそうです。
 
 [](data/eagle.dtd){.listingtable type=xml from=384 to=393}
 
@@ -230,6 +260,34 @@ instancesはinstanceの配列要素です。
 
 ### .../sheet/buses {-}
 ### .../sheet/nets {-}
+
+# ライブラリと回路情報からレンダリングされる内容を作り出すには
+ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
+`part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
+`.../schematic/parts/part`の該当部品を引いて`library`、`deviceset`、`device`を得ます。
+得られた`library`と`deviceset`を使って`.../schematic/libraries/library/devicesets/`の中から
+
+```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
+@startditaa(scale=3)
+
++------------------------------+
+| .../sheet/instances/instance |
++---+--------------------------+
+    | part                     +---------------------------+
+    +--------------------------+                           |
+    | gate                     |    +----------------------v---+
+    +--------------------------+    | .../schematic/parts/part |
+    | x                        |    +---+----------------------+
+    +--------------------------+        | deviceset            +--------------------------------------------------+
+    | y                        |        +----------------------+                                                  |
+    +--------------------------+        | library              +--------------------------------+                 |
+                                        +----------------------+                                |                 |
+                                        | device               |    +---------------------------v-----------------v--------+
+                                        +----------------------+    | .../schematic/libraries/library/devicesets/deviceset |
+                                                                    +------------------------------------------------------+
+@endditaa
+
+```
 
 <!-- # Appendix {-}
 [doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
