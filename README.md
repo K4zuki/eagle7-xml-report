@@ -8,4 +8,4 @@ Yet another study report of Eagle 7.x XML structure
 違いないのですが、あえてN番煎じの内容を書きます・した。主に筆者自身のためです。
 
 最新のコンパイル結果は[**こちら**](https://github.com/K4zuki/eagle7-xml-report/releases/latest)
-を参照ください。~~２０１８年４月の技術書典４に間に合うように仕上げる予定です。~~あぼーんしました ごめんなさい
+を参照ください。~~２０１８年４月の技術書典４に間に合うように仕上げる予定です。~~ あぼーんしました ごめんなさい
