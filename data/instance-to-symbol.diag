@@ -1,0 +1,77 @@
+{
+span_height=30;
+
+  instance [label=".../sheet/instances/instance",width=200];
+    instance.part [label=".part"];
+    instance.gate [label=".gate"];
+    instance.xpos [label=".x"];
+    instance.ypos [label=".y"];
+
+  group{
+      shape = line;
+      instance -- instance.part, instance.gate, instance.xpos, instance.ypos;
+  }
+
+  part [label=".../schematic/parts/part ",width=200];
+    part.name [label=".name"];
+    part.deviceset [label=".deviceset"];
+    part.library [label=".library"];
+    part.device [label=".device"];
+    part.technology [label=".technology"];
+  group {
+      shape = line;
+      part -- part.name, part.deviceset, part.library, part.device, part.technology;
+  }
+  instance.part -> part.name [folded];
+
+  group library_group{
+    shape = line;
+
+    library [label=".../schematic/libraries/library", width=200];
+    library.name [label=".name"];
+    library -- library.name;
+
+    deviceset [label=".../devicesets/deviceset", width=200];
+    deviceset.name [label=".name"];
+    group deviceset_group{
+      label="deviceset"
+      color = "#FF0000";
+      shape = line;
+      deviceset -- deviceset.name;
+
+      device [label=".../devices/device", width=200];
+      device.name [label=".name"];
+      group device_group{
+        label="device"
+//        color = "#F000F0";
+        shape = line;
+        style = dashed;
+        device -- device.name;
+
+        gate [label=".../device/gates/gate", width=200]
+        gate.name [label=".name"]
+        gate.symbol [label=".symbol"]
+        group gate_group{
+          label="gate"
+          color = "#0000FF";
+          shape = line;
+          gate -- gate.name, gate.symbol;
+        }
+      }
+    }
+
+    symbol [label=".../symbols/symbol", width=200];
+    symbol.name [label=".name"];
+    group symbol_group{
+      label="symbol"
+      color = "#FF0000";
+      shape = line;
+      symbol -- symbol.name;
+    }
+
+    library -- deviceset -- device -- gate;
+    library -- symbol ;
+  }
+  part.library -> library.name [folded]
+
+}
