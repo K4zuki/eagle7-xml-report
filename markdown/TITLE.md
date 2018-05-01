@@ -67,6 +67,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 ## 型定義
 型定義部はとりあえず後回しにします。
 
+[doc/eagle.dtd型定義部](data/eagle.dtd){.listingtable type=xml from=16 to=48}
+
 ## ルート要素と直下の子要素たち
 ### //eagle {-}
 ルート要素です。`compatibility`要素（0または1回出現）、`drawing`要素（必ず、1回出現）、
@@ -260,23 +262,148 @@ instancesはinstanceの配列要素です。
 
 ### .../sheet/buses {-}
 ### .../sheet/nets {-}
+ひとことでいうといわゆる**ネットリスト**がここに置かれます。
+
+[](data/eagle.dtd){.listingtable type=xml from=493 to=493}
+
+| Sub element | Appearance |
+|-------------|------------|
+| net         | 0~         |
+
+#### .../sheet/nets/net {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=126 to=130}
+
+| Sub element | Appearance |
+|-------------|------------|
+| segment     | 0~         |
+
+## 各種図形要素たち
+### .../sheet/plain/polygon {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=328 to=343}
+
+| Sub element | Appearance |
+|-------------|------------|
+| vertex      | 0~         |
+<!--  -->
+| attribute |     type      | required | default |                           note                            |
+|-----------|---------------|----------|---------|-----------------------------------------------------------|
+| width     | _Dimension_   | Yes      |         |                                                           |
+| layer     | _Layer_       | Yes      |         |                                                           |
+| spacing   | _Dimension_   | Optional |         |                                                           |
+| pour      | _PolygonPour_ | Yes      | "solid" |                                                           |
+| isolate   | _Dimension_   | Optional |         | Only in `<signal>` or `<package>` context                 |
+| orphans   | _Bool_        | Optional | "no"    | Only in `<signal>` context                                |
+| thermals  | _Bool_        | Optional | "yes"   | Only in `<signal>` context                                |
+| rank      | _Int_         | Optional | "0"     | 1..6 in `<signal>` context, 0 or 7 in `<package>` context |
+
+### .../sheet/plain/polygon/vertex {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=345 to=351}
+
+### .../sheet/plain/wire {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=182 to=196}
+
+| attribute |    type     | required |   default    |                  note                  |
+|-----------|-------------|----------|--------------|----------------------------------------|
+| x1        | _Coord_     | Yes      |              |                                        |
+| y1        | _Coord_     | Yes      |              |                                        |
+| x2        | _Coord_     | Yes      |              |                                        |
+| y2        | _Coord_     | Yes      |              |                                        |
+| width     | _Dimension_ | Yes      |              |                                        |
+| layer     | _Layer_     | Yes      |              |                                        |
+| extent    | _Extent_    | Optional |              | Only applicable for airwires           |
+| style     | _WireStyle_ |          | "continuous" |                                        |
+| curve     | _WireCurve_ |          | "0"          |                                        |
+| cap       | _WireCap_   |          | "round"      | Only applicable if 'curve' is not zero |
+
+### .../sheet/plain/text {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=219 to=230}
+
+| attribute |    type     | required |    default     |
+|-----------|-------------|----------|----------------|
+| x         | _Coord_     | Yes      |                |
+| y         | _Coord_     | Yes      |                |
+| size      | _Dimension_ | Yes      |                |
+| layer     | _Layer_     | Yes      |                |
+| font      | _TextFont_  |          | "proportional" |
+| ratio     | _Int_       |          | "8"            |
+| rot       | _Rotation_  |          | "R0"           |
+| align     | _Align_     |          | "bottom-left"  |
+| distance  | _Int_       |          | "50"           |
+
+### .../sheet/plain/circle {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=232 to=239}
+
+| attribute |    type     | required | default |
+|-----------|-------------|----------|---------|
+| x         | _Coord_     | Yes      |         |
+| y         | _Coord_     | Yes      |         |
+| radius    | _Coord_     | Yes      |         |
+| width     | _Dimension_ | Yes      |         |
+| layer     | _Layer_     | Yes      |         |
+
+### .../sheet/plain/rectangle {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=241 to=249}
+
+| attribute |    type    | required | default |
+|-----------|------------|----------|---------|
+| x1        | _Coord_    | Yes      |         |
+| y1        | _Coord_    | Yes      |         |
+| x2        | _Coord_    | Yes      |         |
+| y2        | _Coord_    | Yes      |         |
+| layer     | _Layer_    | Yes      |         |
+| rot       | _Rotation_ |          | "R0"    |
+
+### .../sheet/plain/frame {-}
+
+[](data/eagle.dtd){.listingtable type=xml from=251 to=264}
+
+|   attribute   |  type   | required | default |
+|---------------|---------|----------|---------|
+| x1            | _Coord_ | Yes      |         |
+| y1            | _Coord_ | Yes      |         |
+| x2            | _Coord_ | Yes      |         |
+| y2            | _Coord_ | Yes      |         |
+| columns       | _Int_   | Yes      |         |
+| rows          | _Int_   |          |         |
+| layer         | _Layer_ |          |         |
+| border-left   | _Bool_  |          |         |
+| border-top    | _Bool_  |          |         |
+| border-right  | _Bool_  |          |         |
+| border-bottom | _Bool_  |          |         |
 
 # ライブラリと回路情報からレンダリングされる内容を作り出すには
+## やってTRY（１）：シンボルの描画
+### シンボルまでたどり着く
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
 `part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
 `.../schematic/parts/part`の該当部品を引いて`library`、`deviceset`、`device`を得ます。
 得られた`library`と`deviceset`を使って`.../schematic/libraries/library/devicesets/`の中から
 `deviceset`を得ます。`deviceset/gates/gate`内の`symbol`属性を使って`/schematic/libraries/library/symbols/symbol`
-を得ます。これである部品のシンボルが得られたので、シンボル内の部品[^components]それぞれについて座標(`x`,`y`)を中心に描画すれば
+を得ます。これである部品のシンボルが得られるので、シンボル内の部品[^components]それぞれについて座標(`x`,`y`)を中心に描画すれば
 どうやらライブラリ内のシンボルを描画することはできそうに思えます。
 
 [^components]: _wire_/_circle_/_text_/_pin_ などです。回路図ファイルは優先順位計算がないっぽいのでポリゴンも描けると思います。
 
-[](data/instance-to-symbol.diag){.blockdiag}
+[instance to symbol query tree](data/instance-to-symbol.diag){.blockdiag}
 
+試しにシンプルな回路を描いてみて、実際にシンボル情報までたどり着いてみます。Eagle付属のライブラリを使って
+トランジスタ2石の無安定（非安定）バイブレータ[^wikipedia]を描いてみます。
+
+![無安定（非安定）バイブレータ](images/multivibrator.png)
+
+[^wikipedia]: <https://ja.wikipedia.org/wiki/マルチバイブレータ#非安定マルチバイブレータ回路>
+<!--
 ```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
 <#include "instance-to-symbol.puml">
 ```
+ -->
 
 <!-- # Appendix {-}
 [doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
