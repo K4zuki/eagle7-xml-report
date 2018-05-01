@@ -79,10 +79,11 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 | compatibility | 0~1        |
 | drawing       | 1          |
 | compatibility | 0~1        |
+|               |            |
 <!--  -->
-|   attribute   |    type    | required |
-|---------------|------------|----------|
-| version       | _Real_     | Yes      |
+| attribute |  type  | required |
+|-----------|--------|----------|
+| version   | _Real_ | Yes      |
 
 [](data/eagle.dtd){.listingtable type=xml from=52 to=56}
 
@@ -95,10 +96,10 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 #### //eagle/compatibility/note {-}
 
-|   attribute   |    type    | required |
-|---------------|------------|----------|
-| version       | _Real_     | Yes      |
-| severity      | _Severity_ | Yes      |
+| attribute |    type    | required |
+|-----------|------------|----------|
+| version   | _Real_     | Yes      |
+| severity  | _Severity_ | Yes      |
 
 [](data/eagle.dtd){.listingtable type=xml from=58 to=65}
 
@@ -262,6 +263,7 @@ instancesはinstanceの配列要素です。
 
 ### .../sheet/buses {-}
 ### .../sheet/nets {-}
+
 ひとことでいうといわゆる**ネットリスト**がここに置かれます。
 
 [](data/eagle.dtd){.listingtable type=xml from=493 to=493}
@@ -278,6 +280,7 @@ instancesはinstanceの配列要素です。
 |-------------|------------|
 | segment     | 0~         |
 
+## ライブラリ要素と直下の子要素たち
 ## 各種図形要素たち
 ### .../sheet/plain/polygon {-}
 
@@ -301,6 +304,12 @@ instancesはinstanceの配列要素です。
 ### .../sheet/plain/polygon/vertex {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=345 to=351}
+
+| attribute |    type     | required | default |                      note                      |
+|-----------|-------------|----------|---------|------------------------------------------------|
+| x         | _Coord_     | Yes      |         |                                                |
+| y         | _Coord_     | Yes      |         |                                                |
+| curve     | _WireCurve_ |          | "0"     | The curvature from this vertex to the next one |
 
 ### .../sheet/plain/wire {-}
 
@@ -380,7 +389,6 @@ instancesはinstanceの配列要素です。
 
 # ライブラリと回路情報からレンダリングされる内容を作り出すには
 ## やってTRY（１）：シンボルの描画
-### シンボルまでたどり着く
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
 `part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
 `.../schematic/parts/part`の該当部品を引いて`library`、`deviceset`、`device`を得ます。
@@ -399,6 +407,39 @@ instancesはinstanceの配列要素です。
 ![無安定（非安定）バイブレータ](images/multivibrator.png)
 
 [^wikipedia]: <https://ja.wikipedia.org/wiki/マルチバイブレータ#非安定マルチバイブレータ回路>
+
+### とりあえず１個描く
+#### シンボルまでたどり着く {-}
+
+早速回路図ファイルを開き、`instances`を確認すると以下のようになっています。_Eagle付属ライブラリは
+けっこう情報が詰め込まれている[^packages]ので、この回路規模でも簡単に6000行のファイルになっています。_
+
+[packages](data/astable_multivibrator.sch){.listingtable type=xml from=5914 to=5925}
+
+[^packages]: ひとつの回路図シンボルに対し20〜30くらいのパッケージ情報が書かれているのが3種類、
+1パッケージ5行でこの規模になってしまいます。
+
+ここにある"Q1"をレンダリングしてみます。まず`part="Q1"`から`part`を引きます。
+
+[part](data/astable_multivibrator.sch){.listingtable type=xml from=5899 to=5899}
+
+ここから"transistor-npn"ライブラリの"2N3904"という`deviceset`にたどり着きます。
+
+[deviceset](data/astable_multivibrator.sch){.listingtable type=xml from=111 to=128}
+
+この`deviceset`には`gate`が１種類だけなのでそのまま`NPN`という`symbol`を"transistor-npn"ライブラリ内で探します。
+
+[symbol](data/astable_multivibrator.sch){.listingtable type=xml from=91 to=108}
+
+あとはこれらを組み合わせればQ1が描画できます。
+
+#### 座標系に注意 {-}
+
+筆者はとりあえずSVGに出力することを考えましたが、そういえば座標系変換が必要なことに気づきました。
+Eagleの座標系は数学で習ったいわゆる直交(XY)座標系で、SVGは標準的な画像・映像の座標系です。
+したがってSVGにするときはY座標の+/-を反転します。
+
+
 <!--
 ```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
 <#include "instance-to-symbol.puml">
