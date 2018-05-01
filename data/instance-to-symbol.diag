@@ -1,6 +1,7 @@
 {
-span_height=30;
-
+span_height=50;
+span_width=80;
+default_group_color=green;
   instance [label=".../sheet/instances/instance",width=200];
     instance.part [label=".part"];
     instance.gate [label=".gate"];
@@ -22,7 +23,7 @@ span_height=30;
       shape = line;
       part -- part.name, part.deviceset, part.library, part.device, part.technology;
   }
-  instance.part -> part.name [folded];
+  instance.part -> part.name [folded,thick,label="part",color=orange];
 
   group library_group{
     shape = line;
@@ -35,7 +36,7 @@ span_height=30;
     deviceset.name [label=".name"];
     group deviceset_group{
       label="deviceset"
-      color = "#FF0000";
+//      color = "#FF0000";
       shape = line;
       deviceset -- deviceset.name;
 
@@ -45,7 +46,7 @@ span_height=30;
         label="device"
 //        color = "#F000F0";
         shape = line;
-        style = dashed;
+//        style = dashed;
         device -- device.name;
 
         gate [label=".../device/gates/gate", width=200]
@@ -53,7 +54,7 @@ span_height=30;
         gate.symbol [label=".symbol"]
         group gate_group{
           label="gate"
-          color = "#0000FF";
+//          color = "#0000FF";
           shape = line;
           gate -- gate.name, gate.symbol;
         }
@@ -64,7 +65,7 @@ span_height=30;
     symbol.name [label=".name"];
     group symbol_group{
       label="symbol"
-      color = "#FF0000";
+//      color = "#FF0000";
       shape = line;
       symbol -- symbol.name;
     }
@@ -72,6 +73,10 @@ span_height=30;
     library -- deviceset -- device -- gate;
     library -- symbol ;
   }
-  part.library -> library.name [folded]
+  part.library -> library.name [folded,thick,label="library",color=purple]
+  part.deviceset -> deviceset.name [folded,thick,label="deviceset",color=red]
+  part.device -> device.name[folded,thick,label="device",color=orange]
+  gate.symbol -> symbol.name[folded,thick,label="symbol",color=red]
+  instance.gate -> gate.name [folded,thick,label="gate",color=blue]
 
 }
