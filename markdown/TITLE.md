@@ -17,6 +17,7 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 筆者は８系を所有していないのでわかりません。
 
 ## この本の対象のEagleバージョン {-}
+
 **Eagle Version 7.5.0** を対象にします。
 
 ## この本のゴール {-}
@@ -24,10 +25,12 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 レイアウトファイル(brdファイル)は基本的に対象外にします。
 
 ## おことわり {-}
+
 この本の内容は個人的なメモ程度であり、筆者は何ら責任を負わないものとします。
 幸いにも1次資料が存在するので、疑問は大元のファイルを自力で解析することで解決してください。
 
 # (`eagle.dtd`を)探せ！(仕様の)全てをそこにおいてきた！
+
 参考のために拙作のEagleプロジェクトからschファイルを引用してみると2行目にいきなり
 「ここを見ろ」と言われてしまいます。
 
@@ -46,6 +49,7 @@ Eagleファイルの解析やそれに基づいたオレオレ処理[^extra-proc
 AtomとかVSCodeのビューアプラグイン書けるとかゆめがひろがりんぐ（？）
 
 ## eagle.dtdはどこにいるのか {-}
+
 DTDとして指定されている`eagle.dtd`のありかを探します。`eagle.dtd`でググるとElement14の
 掲示板ページが見つかります：
 
@@ -60,17 +64,20 @@ Eagleバージョン６のリリースノートを引用しているようです
 
 # eagle.dtdを研究しよう
 ## ライセンス条項 {-}
+
 eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められていますが、改変は禁止です。
 
 [doc/eagle.dtdライセンス部](data/eagle.dtd){.listingtable type=plain from=1 to=14}
 
 ## 型定義
+
 型定義部はとりあえず後回しにします。
 
 [doc/eagle.dtd型定義部](data/eagle.dtd){.listingtable type=xml from=16 to=48}
 
 ## ルート要素と直下の子要素たち
 ### //eagle {-}
+
 ルート要素です。`compatibility`要素（0または1回出現）、`drawing`要素（必ず、1回出現）、
 `compatibility`要素（0または1回出現）をこの順序で子要素に持ちます。
 
@@ -88,6 +95,7 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 [](data/eagle.dtd){.listingtable type=xml from=52 to=56}
 
 ### //eagle/compatibility {-}
+
 文字列要素です。`eagle`タグに書かれたものと異なるバージョンのEagleでファイルを開いたり編集した場合に更新されると思われます。
 <!-- attr=属性 -->
 | Sub element | Appearance |
@@ -104,6 +112,7 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 [](data/eagle.dtd){.listingtable type=xml from=58 to=65}
 
 ### //eagle/drawing {-}
+
 描画情報の要素です。設定情報(`settings`,`gtid`,`layers`)と`library/schematic/board`の
 いずれかを子要素に持ちます。
 
@@ -117,6 +126,7 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 [](data/eagle.dtd){.listingtable type=xml from=67 to=67}
 
 ### //eagle/drawing/schematic {-}
+
 回路図情報を持つ要素です。
 
 [](data/eagle.dtd){.listingtable type=xml from=75 to=79}
@@ -154,8 +164,9 @@ librariesはlibraryの配列要素です。
 | library     | 0~         |
 
 ### .../schematic/libraries/library {-}
+
 回路図に部品を置くと追加されます。追加される内容はそのライブラリまるごとではなく、
-当該部品だけ切り出しされてきます。
+当該部品だけ切り出しされてきます。切り出されるものは回路図シンボルとレイアウト両方です。
 
 [](data/eagle.dtd){.listingtable type=xml from=69 to=73}
 
@@ -216,7 +227,8 @@ sheetsはsheetの配列要素です[^non-commercial-license]。
 
 ## シート要素と直下の子要素たち
 ### .../sheet/plain {-}
-ライブラリを使わず直接描かれたオブジェクトがまとめられます。
+
+ライブラリを使わず直接描かれたオブジェクトがまとめられます。Netレイヤで描かれた図形は`nets`要素以下に置かれます。
 
 [](data/eagle.dtd){.listingtable type=xml from=488 to=488}
 
@@ -281,8 +293,58 @@ instancesはinstanceの配列要素です。
 | segment     | 0~         |
 
 ## ライブラリ要素と直下の子要素たち
+### .../library/packages {-}
+### .../library/symbols {-}
+### .../library/symbols/symbol {-}
+
+回路図シンボル要素です。
+
+[](data/eagle.dtd){.listingtable type=xml from=103 to=106}
+
+| Sub element | Appearance |
+|-------------|------------|
+| description | 0~1        |
+| polygon     | 0~         |
+| wire        | 0~         |
+| text        | 0~         |
+| dimension   | 0~         |
+| pin         | 0~         |
+| circle      | 0~         |
+| rectangle   | 0~         |
+| frame       | 0~         |
+<!--  -->
+| attribute |   type   | required | default |
+|-----------|----------|----------|---------|
+| name      | _String_ | Yes      |         |
+
+#### .../library/symbols/symbol/pin {-}
+
+回路図エディタ上で配線をつなげる"ピン"の要素です。属性のうち`direction`/`swaplevel`の内容は
+図形の描画だけを目標とするときには気にしなくていいと思われます。
+
+実際の描画は始点$(x,y)$から右方向に水平線分を描きます。線分の長さは`length`が _pin_/_short_/_middle_/_long_ の順で
+0/1/2/3 * 2.54mm(0.1インチ)です。
+`visible`スイッチの内容が*pin*または*both*のとき、線分の終点から2.50mmくらいのところから`name`の内容を書きます。
+*pad*または*both*のとき、線分の上または左にピン番号を書きます。ピン番号は`deviceset`要素以下の`connect`子要素の内容を
+参照する必要があります。
+
+[](data/eagle.dtd){.listingtable type=xml from=353 to=364}
+
+| attribute |      type      | required | default |
+|-----------|----------------|----------|---------|
+| name      | _String_       | Yes      |         |
+| x         | _Coord_        | Yes      |         |
+| y         | _Coord_        | Yes      |         |
+| visible   | _PinVisible_   |          | "both"  |
+| length    | _PinLength_    |          | "long"  |
+| direction | _PinDirection_ |          | "io"    |
+| function  | _PinFunction_  |          | "none"  |
+| swaplevel | _Int_          |          | "0"     |
+| rotation  | _Rotation_     |          | "R0"    |
+
+### .../library/devicesets {-}
 ## 各種図形要素たち
-### .../sheet/plain/polygon {-}
+### .../sheet/*/polygon {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=328 to=343}
 
@@ -301,7 +363,7 @@ instancesはinstanceの配列要素です。
 | thermals  | _Bool_        | Optional | "yes"   | Only in `<signal>` context                                |
 | rank      | _Int_         | Optional | "0"     | 1..6 in `<signal>` context, 0 or 7 in `<package>` context |
 
-### .../sheet/plain/polygon/vertex {-}
+### .../sheet/*/polygon/vertex {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=345 to=351}
 
@@ -311,7 +373,10 @@ instancesはinstanceの配列要素です。
 | y         | _Coord_     | Yes      |         |                                                |
 | curve     | _WireCurve_ |          | "0"     | The curvature from this vertex to the next one |
 
-### .../sheet/plain/wire {-}
+### .../sheet/*/wire {-}
+
+$(x1,y1)$と$(x2,y2)$を結ぶ線分要素です。線分は直線だけではなく弧を含みます。$curve>0$のとき始点から反時計回りの弧を描きます。
+$(x1,y1)=(0,0), (x2,y2)=(10,0),curve=180$なら*下に凸の半円*です。
 
 [](data/eagle.dtd){.listingtable type=xml from=182 to=196}
 
@@ -328,7 +393,7 @@ instancesはinstanceの配列要素です。
 | curve     | _WireCurve_ |          | "0"          |                                        |
 | cap       | _WireCap_   |          | "round"      | Only applicable if 'curve' is not zero |
 
-### .../sheet/plain/text {-}
+### .../sheet/*/text {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=219 to=230}
 
@@ -344,7 +409,7 @@ instancesはinstanceの配列要素です。
 | align     | _Align_     |          | "bottom-left"  |
 | distance  | _Int_       |          | "50"           |
 
-### .../sheet/plain/circle {-}
+### .../sheet/*/circle {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=232 to=239}
 
@@ -356,7 +421,9 @@ instancesはinstanceの配列要素です。
 | width     | _Dimension_ | Yes      |         |
 | layer     | _Layer_     | Yes      |         |
 
-### .../sheet/plain/rectangle {-}
+### .../sheet/*/rectangle {-}
+
+$(x1,y1)$から$(x2,y2)$までの塗りつぶし矩形要素です。
 
 [](data/eagle.dtd){.listingtable type=xml from=241 to=249}
 
@@ -369,7 +436,7 @@ instancesはinstanceの配列要素です。
 | layer     | _Layer_    | Yes      |         |
 | rot       | _Rotation_ |          | "R0"    |
 
-### .../sheet/plain/frame {-}
+### .../sheet/*/frame {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=251 to=264}
 
@@ -389,6 +456,7 @@ instancesはinstanceの配列要素です。
 
 # ライブラリと回路情報からレンダリングされる内容を作り出すには
 ## やってTRY（１）：シンボルの描画
+
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
 `part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
 `.../schematic/parts/part`の該当部品を引いて`library`、`deviceset`、`device`を得ます。
@@ -411,8 +479,8 @@ instancesはinstanceの配列要素です。
 ### とりあえず１個描く
 #### シンボルまでたどり着く {-}
 
-早速回路図ファイルを開き、`instances`を確認すると以下のようになっています。_Eagle付属ライブラリは
-けっこう情報が詰め込まれている[^packages]ので、この回路規模でも簡単に6000行のファイルになっています。_
+早速回路図ファイルを開き、`instances`を確認すると以下のようになっています。
+_Eagle付属ライブラリはけっこう情報が詰め込まれている[^packages]ので、この回路規模でも簡単に6000行のファイルになっています。_
 
 [packages](data/astable_multivibrator.sch){.listingtable type=xml from=5914 to=5925}
 
@@ -438,7 +506,43 @@ instancesはinstanceの配列要素です。
 筆者はとりあえずSVGに出力することを考えましたが、そういえば座標系変換が必要なことに気づきました。
 Eagleの座標系は数学で習ったいわゆる直交(XY)座標系で、SVGは標準的な画像・映像の座標系です。
 したがってSVGにするときはY座標の+/-を反転します。
+予めY軸を反転する設定をしたSVGのg要素を用意して、そのなかに他の図形を入れる構造にすれば座標系のことは悩まなくて良さそうです。
 
+#### 線分 {-}
+
+Q1の線分(`wire`要素)を描きます。
+
+[wire](data/astable_multivibrator.sch){.listingtable type=xml from=92 to=101}
+
+Q1の座標は$(45.72,50.8)$でした。そこからの相対座標で$(2.54,2.54)$ -> $(0.508,1.524)$の線分を太さ0.1524mm、
+レイヤ94の配色で引きます。pythonのsvgwriteライブラリを使うとこんな感じになります。
+
+```python
+import svgwrite
+
+...
+dwg = svgwrite.Drawing(filename="Q1.svg", debug=True)
+...
+tr = dwg.g()
+dwg.add(tr)
+tr.add(dwg.line(start=(2.54*mm, 2.54*mm), end=(0.508*mm, 1.524*mm), stroke="black", stroke_width=0.1524*mm,
+stroke_linecap="round"))
+...
+tr.save()
+```
+
+#### 矩形 {-}
+
+次は矩形です。
+
+[rectangle](data/astable_multivibrator.sch){.listingtable type=xml from=104 to=104}
+<!-- <rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94"/> -->
+
+#### ピンまたは接続点 {-}
+
+続いて`pin`要素オブジェクトです。始点座標から水平または垂直の線分を描きます。
+
+### なんか部品化できそうな気がする
 
 <!--
 ```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
