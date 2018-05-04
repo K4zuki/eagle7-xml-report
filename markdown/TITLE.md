@@ -253,6 +253,7 @@ instancesはinstanceの配列要素です。
 | polygon     | 0~         |
 
 #### .../sheet/instances/instance {-}
+
 実際に置かれた部品の情報がまとめられます。`part`属性は"C1"とか"R10"とか"IC2"などの呼び名が
 格納されています。`gate`は複数の部品をひとかたまりにしたライブラリを使っているときの、
 各々の部品名("G$1"など)です。`x`と`y`属性は回路図上の座標です。この座標を部品の中心として、
@@ -395,6 +396,9 @@ $(x1,y1)=(0,0), (x2,y2)=(10,0),curve=180$なら*下に凸の半円*です。
 
 ### .../sheet/*/text {-}
 
+テキスト要素です。座標$(x,y)$はアンカー位置です。align属性の値によって変わります。
+テキストの内容に`!`が含まれる場合は`!`と{`!`または改行(`\\n`)}に挟まれた範囲それぞれに上線がつきます。正規表現だと`/!([^!\\n]*)[!\\n]/g`です。
+
 [](data/eagle.dtd){.listingtable type=xml from=219 to=230}
 
 | attribute |    type     | required |    default     |
@@ -454,8 +458,8 @@ $(x1,y1)$から$(x2,y2)$までの塗りつぶし矩形要素です。
 | border-right  | _Bool_  |          |         |
 | border-bottom | _Bool_  |          |         |
 
-# ライブラリと回路情報からレンダリングされる内容を作り出すには
-## やってTRY（１）：シンボルの描画
+# ライブラリと回路情報からレンダリングされる内容を作り出す
+## やってTRY（１）：ファイルを直接見てシンボルを描画
 
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
 `part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
@@ -533,14 +537,23 @@ tr.save()
 
 #### 矩形 {-}
 
-次は矩形です。
+次は矩形です。SVGの矩形の指定方法(始点（左下）の座標と大きさ)に合わせる変換が必要です。
 
 [rectangle](data/astable_multivibrator.sch){.listingtable type=xml from=104 to=104}
 <!-- <rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94"/> -->
 
 #### ピンまたは接続点 {-}
 
-続いて`pin`要素オブジェクトです。始点座標から水平または垂直の線分を描きます。
+続いて`pin`要素オブジェクトです。始点座標から水平または垂直の線分を描きます。`visible`属性が"off"なので
+ピン名・ピン番号とも書きません。
+
+[pin](data/astable_multivibrator.sch){.listingtable type=xml from=165 to=167}
+
+#### テキスト
+
+最後にテキストオブジェクトです。
+
+[text](data/astable_multivibrator.sch){.listingtable type=xml from=102 to=103}
 
 ### なんか部品化できそうな気がする
 
