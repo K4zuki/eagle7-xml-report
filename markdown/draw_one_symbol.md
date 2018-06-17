@@ -1,4 +1,5 @@
 # ライブラリと回路情報からレンダリングされる内容を作り出す
+
 ## やってTRY（１）：ファイルを直接見てシンボルを描画
 
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
@@ -9,35 +10,43 @@
 を得ます。これである部品のシンボルが得られるので、シンボル内の部品[^components]それぞれについて座標(`x`,`y`)を中心に描画すれば
 どうやらライブラリ内のシンボルを描画することはできそうに思えます。
 
-[^components]: _wire_/_circle_/_text_/_pin_ などです。回路図ファイルは優先順位計算がないっぽいのでポリゴンも描けると思います。
+[^components]: _wire_/_circle_/_text_/_pin_
+               などです。回路図ファイルは優先順位計算がないっぽいのでポリゴンも描けると思います。
 
 [instance to symbol query tree](data/instance-to-symbol.diag){.blockdiag}
 
-試しにシンプルな回路を描いてみて、実際にシンボル情報までたどり着いてみます。Eagle付属のライブラリを使って
-トランジスタ2石の無安定（非安定）バイブレータ[^wikipedia]を描いてみます。
+#### この節のゴール {-}
+
+Eagleでシンプルな回路図をを描き、回路図ファイル内の実際のシンボル情報までトレースしてみます。
+つぎにそのシンボルを使っている部品をSVGに描画します。
+
+### 回路図を書く
+
+Eagle付属のライブラリを使ってトランジスタ2石の無安定（非安定）バイブレータ[^wikipedia]を描いてみます。
 
 ![無安定（非安定）バイブレータ](images/multivibrator.png)
 
 [^wikipedia]: <https://ja.wikipedia.org/wiki/マルチバイブレータ#非安定マルチバイブレータ回路>
 
 ### とりあえず１個描く
+
 #### シンボルまでたどり着く {-}
 
 早速回路図ファイルを開き、`instances`を確認すると以下のようになっています。
 _Eagle付属ライブラリはけっこう情報が詰め込まれている[^packages]ので、この回路規模でも簡単に6000行のファイルになっています。_
 
-[packages](data/astable_multivibrator.sch){.listingtable type=xml from=5914 to=5925}
+[packages](data/astable_multivibrator.sch){.listingtable type=xml from=6320 to=6336}
 
 [^packages]: ひとつの回路図シンボルに対し20〜30くらいのパッケージ情報が書かれているのが3種類、
-1パッケージ5行でこの規模になってしまいます。
+             1パッケージ5行でこの規模になってしまいます。
 
 ここにある"Q1"をレンダリングしてみます。まず`part="Q1"`から`part`を引きます。
 
-[part](data/astable_multivibrator.sch){.listingtable type=xml from=5899 to=5899}
+[part](data/astable_multivibrator.sch){.listingtable type=xml from=6236 to=6236}
 
 ここから"transistor-npn"ライブラリの"2N3904"という`deviceset`にたどり着きます。
 
-[deviceset](data/astable_multivibrator.sch){.listingtable type=xml from=111 to=128}
+[deviceset](data/astable_multivibrator.sch){.listingtable type=xml from=149 to=166}
 
 この`deviceset`には`gate`が１種類だけなのでそのまま`NPN`という`symbol`を"transistor-npn"ライブラリ内で探します。
 
@@ -80,6 +89,7 @@ tr.save()
 次は矩形です。SVGの矩形の指定方法(始点（左下）の座標と大きさ)に合わせる変換が必要です。
 
 [rectangle](data/astable_multivibrator.sch){.listingtable type=xml from=104 to=104}
+
 <!-- <rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94"/> -->
 
 #### ピンまたは接続点 {-}
@@ -87,12 +97,15 @@ tr.save()
 続いて`pin`要素オブジェクトです。始点座標から水平または垂直の線分を描きます。`visible`属性が"off"なので
 ピン名・ピン番号とも書きません。
 
-[pin](data/astable_multivibrator.sch){.listingtable type=xml from=165 to=167}
+[pin](data/astable_multivibrator.sch){.listingtable type=xml from=105 to=107}
 
-#### テキスト
+#### テキスト...のことは忘れよう {-}
 
-最後にテキストオブジェクトです。
+最後はテキストなのですが、テキストオブジェクトのことは一時的に忘れます。線分や他の図形オブジェクトと異なり、
+常に正しく読める方向になるような補正が必要で*めんどくさすぎる*からです。
 
 [text](data/astable_multivibrator.sch){.listingtable type=xml from=102 to=103}
 
 ### なんか部品化できそうな気がする
+
+図形部品の集合に限ればsymbol要素からひとかたまりの部品(SVGのg要素)に変換できそうです。
