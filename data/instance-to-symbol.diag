@@ -48,16 +48,16 @@ default_group_color=green;
         shape = line;
 //        style = dashed;
         device -- device.name;
+      }
 
-        gate [label=".../device/gates/gate", width=200]
-        gate.name [label=".name"]
-        gate.symbol [label=".symbol"]
-        group gate_group{
-          label="gate"
-//          color = "#0000FF";
-          shape = line;
-          gate -- gate.name, gate.symbol;
-        }
+      gate [label=".../gates/gate", width=200]
+      gate.name [label=".name"]
+      gate.symbol [label=".symbol"]
+      group gate_group{
+        label="gate"
+//        color = "#0000FF";
+        shape = line;
+        gate -- gate.name, gate.symbol;
       }
     }
 
@@ -70,7 +70,8 @@ default_group_color=green;
       symbol -- symbol.name;
     }
 
-    library -- deviceset -- device -- gate;
+    library -- deviceset -- device;
+    library -- deviceset -- gate;
     library -- symbol ;
   }
   part.library -> library.name [folded,thick,label="library",color=purple]
