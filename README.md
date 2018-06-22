@@ -1,7 +1,9 @@
 # eagle7-xml-report
+
 Yet another study report of Eagle 7.x XML structure
 
 # このリポジトリについて
+
 この本は、筆者がCadSoft Eagle(**バージョン７**)のsch/brdファイルをCIで
 自動レンダリングしたいと考え、ファイル構造を調べた結果のレポート（の原稿一式）です。
 こんなものはきっとすでにどこかの誰かが解析を終えてブログなりにまとめているに
