@@ -5,7 +5,7 @@
 筆者の予想ではしかしこんなものはきっとすでにどこかの誰かがブログなりにまとめているに
 違いないのですが[^python-lib-exists]、あえてN番煎じの内容を書きます・した。主に筆者自身のためです。
 
-[^python-lib-exists]: https://github.com/at-wat/eagle2svg など
+[^python-lib-exists]: <https://github.com/at-wat/eagle2svg> など
 
 実際のファイルからXMLツリーを解析していこうとか考えてましたが早々に定義リストが
 見つかってしまったので、このまとめ本がDTDの日本語訳の一つになればいいなって思います。
