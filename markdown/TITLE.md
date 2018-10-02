@@ -10,11 +10,11 @@
 実際のファイルからXMLツリーを解析していこうとか考えてましたが早々に定義リストが
 見つかってしまったので、このまとめ本がDTDの日本語訳の一つになればいいなって思います。
 
-EagleはすでにAutodeskに買収されバージョンも８に上がっていますが、もし現在Eagle
+EagleはすでにAutodeskに買収されバージョンも~~８~~*９*に上がっていますが、もし現在Eagle
 バージョン７をあえて使っている・または将来使う予定でいる方がいましたら、ちょっとだけ
 役に立つかもしれません。
-もしかしたらバージョン８系のファイルに適用できる部分もあるかもしれませんが、
-筆者は８系を所有していないのでわかりません。
+もしかしたらバージョン８系以上のファイルに適用できる部分もあるかもしれませんが、
+筆者は８系９系とも所有していないのでわかりません。
 
 ## この本の対象のEagleバージョン {-}
 
@@ -30,13 +30,5 @@ EagleはすでにAutodeskに買収されバージョンも８に上がってい�
 幸いにも1次資料が存在するので、疑問は大元のファイルを自力で解析することで解決してください。
 
 <#include "spec.md">
-<#include "draw_one_symbol.md">
-
-<!--
-```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
-<#include "instance-to-symbol.puml">
-```
- -->
-
-<!-- # Appendix {-}
-[doc/eagle.dtd全文](data/eagle.dtd){.listingtable type=xml} -->
+<!--<#include "draw_one_symbol.md">-->
+<#include "tail.md">

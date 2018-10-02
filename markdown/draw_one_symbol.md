@@ -1,6 +1,6 @@
 # ライブラリと回路情報からレンダリングされる内容を作り出す
 
-## やってTRY（１）：ファイルを直接見てシンボルを描画
+## やってTRY：ファイルを直接見てシンボルを描画
 
 ここまで調べてみてある程度方針が固まってきました。`.../sheet/instances/instance/`以下から
 `part`、`gate`、`x`、`y`を得ます。この中の`part`を使って
@@ -35,14 +35,14 @@ Eagle付属のライブラリを使ってトランジスタ2石の無安定（�
 早速回路図ファイルを開き、`instances`を確認すると以下のようになっています。
 _Eagle付属ライブラリはけっこう情報が詰め込まれている[^packages]ので、この回路規模でも簡単に6000行のファイルになっています。_
 
-[packages](data/astable_multivibrator.sch){.listingtable type=xml from=6320 to=6336}
+[packages](data/astable_multivibrator.sch){.listingtable type=xml from=6499 to=6532}
 
 [^packages]: ひとつの回路図シンボルに対し20〜30くらいのパッケージ情報が書かれているのが3種類、
              1パッケージ5行でこの規模になってしまいます。
 
 ここにある"Q1"をレンダリングしてみます。まず`part="Q1"`から`part`を引きます。
 
-[part](data/astable_multivibrator.sch){.listingtable type=xml from=6236 to=6236}
+[part](data/astable_multivibrator.sch){.listingtable type=xml from=6384 to=6384}
 
 ここから"transistor-npn"ライブラリの"2N3904"という`deviceset`にたどり着きます。
 
@@ -67,7 +67,7 @@ Q1の線分(`wire`要素)を描きます。
 
 [wire](data/astable_multivibrator.sch){.listingtable type=xml from=92 to=101}
 
-Q1の座標は$(45.72,50.8)$でした。そこからの相対座標で$(2.54,2.54)$ -> $(0.508,1.524)$の線分を太さ0.1524mm、
+Q1の座標は$(45.72,50.8)$でした。そこからの相対座標で$(2.54,2.54)$ → $(0.508,1.524)$の線分を太さ0.1524mm、
 レイヤ94の配色で引きます。pythonのsvgwriteライブラリを使うとこんな感じになります。
 
 ```python
@@ -78,11 +78,12 @@ dwg = svgwrite.Drawing(filename="Q1.svg", debug=True)
 ...
 tr = dwg.g()
 dwg.add(tr)
-tr.add(dwg.line(start=(2.54*mm, 2.54*mm), end=(0.508*mm, 1.524*mm), stroke="black", stroke_width=0.1524*mm,
-stroke_linecap="round"))
+tr.add(dwg.line(start=(2.54*mm, 2.54*mm), end=(0.508*mm, 1.524*mm), stroke_width=0.1524*mm, stroke_linecap="round"))
 ...
 tr.save()
 ```
+
+これをwire要素それぞれについて繰り返します。
 
 #### 矩形 {-}
 
@@ -90,7 +91,7 @@ tr.save()
 
 [rectangle](data/astable_multivibrator.sch){.listingtable type=xml from=104 to=104}
 
-<!-- <rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94"/> -->
+<!--<rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94"/>-->
 
 #### ピンまたは接続点 {-}
 
@@ -106,6 +107,10 @@ tr.save()
 
 [text](data/astable_multivibrator.sch){.listingtable type=xml from=102 to=103}
 
-### なんか部品化できそうな気がする
+### なんか部品化できそうな気がする {-}
 
-図形部品の集合に限ればsymbol要素からひとかたまりの部品(SVGのg要素)に変換できそうです。
+以上の作業をinstanceごとに繰り返し、各instanceで使われているsymbolをグループで登録(SVGのg要素)していけば部品として扱えそうです。
+たまにいる反転（ミラー）指定されているinstanceに対応するため、symbolをさらに細かく図形とテキストに分け、symbolを
+図形グループとテキストグループをまとめたグループにします。最後に図形グループを垂直反転して図形部品の天地を揃えます。
+
+[](data/python.py){.listingtable type=python from=19 to=46}

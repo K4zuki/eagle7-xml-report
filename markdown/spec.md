@@ -1,4 +1,4 @@
-# (`eagle.dtd`を)探せ！(仕様の)全てをそこにおいてきた！
+# (`eagle.dtd`を)探せ！(仕様の)全てをそこにおいてきた！^[<https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%A3%E3%83%BC%E3%82%A2%E3%83%BC!>]
 
 参考のために拙作のEagleプロジェクトからschファイルを引用してみると2行目にいきなり 「ここを見ろ」と言われてしまいます。
 
@@ -38,6 +38,8 @@ eagle.dtdは"CC BY-ND 3.0"ライセンスのもとで再配布が認められて
 
 [doc/eagle.dtdライセンス部](data/eagle.dtd){.listingtable type=plain from=1 to=14}
 
+\\newpage
+
 ## 型定義
 
 型定義部はとりあえず後回しにします。
@@ -60,7 +62,6 @@ _Rotation_ 型は`Rxxx`(xxxは+/-0~359.9)で表される回転角度に*M*(Mirro
 | compatibility | 0~1        |
 | drawing       | 1          |
 | compatibility | 0~1        |
-|               |            |
 
 <!--  -->
 | attribute | type   | required |
@@ -68,6 +69,8 @@ _Rotation_ 型は`Rxxx`(xxxは+/-0~359.9)で表される回転角度に*M*(Mirro
 | version   | _Real_ | Yes      |
 
 [](data/eagle.dtd){.listingtable type=xml from=52 to=56}
+
+\\newpage
 
 ### //eagle/compatibility {-}
 
@@ -87,9 +90,11 @@ _Rotation_ 型は`Rxxx`(xxxは+/-0~359.9)で表される回転角度に*M*(Mirro
 
 [](data/eagle.dtd){.listingtable type=xml from=58 to=65}
 
+\\newpage
+
 ### //eagle/drawing {-}
 
-描画情報の要素です。設定情報(`settings`,`gtid`,`layers`)と`library/schematic/board`の いずれかを子要素に持ちます。
+描画情報の要素です。設定情報(`settings`、`grid`、`layers`)と`library/schematic/board`の いずれかを子要素に持ちます。
 
 | Sub element                   | Appearance |
 |:------------------------------|:-----------|
@@ -99,6 +104,8 @@ _Rotation_ 型は`Rxxx`(xxxは+/-0~359.9)で表される回転角度に*M*(Mirro
 | library or schematic or board | 1          |
 
 [](data/eagle.dtd){.listingtable type=xml from=67 to=67}
+
+\\newpage
 
 ### //eagle/drawing/schematic {-}
 
@@ -124,10 +131,14 @@ _Rotation_ 型は`Rxxx`(xxxは+/-0~359.9)で表される回転角度に*M*(Mirro
 | xreflabel | _String_ | Optional |
 | xrefpart  | _String_ | Optional |
 
+\\newpage
+
 ブランクファイルを試しに作ったところ、`errors`と`description`以外の子要素が
 用意されました。それぞれの子要素はブランクまたはデフォルト値が格納されています。
 
 [untitle.sch（抜粋）](data/untitled.sch){.listingtable type=xml from=21 to=46}
+
+\\newpage
 
 ## 回路図要素直下の子要素たち
 
@@ -155,6 +166,8 @@ librariesはlibraryの配列要素です。
 | symbols     | 0~1        |
 | devicesets  | 0~1        |
 
+\\newpage
+
 ### .../schematic/parts {-}
 
 | Sub element | Appearance |
@@ -180,6 +193,8 @@ librariesはlibraryの配列要素です。
 | technology | _String_ | Optional | ""      |
 | value      | _String_ | Optional |         |
 
+\\newpage
+
 ### .../schematic/sheets {-}
 
 sheetsはsheetの配列要素です[^non-commercial-license]。
@@ -192,7 +207,7 @@ sheetsはsheetの配列要素です[^non-commercial-license]。
 
 [^non-commercial-license]: 非営利ライセンスでは１シートしか使えないのでsheetは１度だけ登場します。
 
-#### .../schematic/sheets/sheet {-}
+### .../schematic/sheets/sheet {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=96 to=96}
 
@@ -204,6 +219,8 @@ sheetsはsheetの配列要素です[^non-commercial-license]。
 | instances   | 0~1        |
 | busses      | 0~1        |
 | nets        | 0~1        |
+
+\\newpage
 
 ## シート要素と直下の子要素たち
 
@@ -234,7 +251,7 @@ instancesはinstanceの配列要素です。
 |:------------|:-----------|
 | polygon     | 0~         |
 
-#### .../sheet/instances/instance {-}
+### .../sheet/instances/instance {-}
 
 実際に置かれた部品の情報がまとめられます。`part`属性は"C1"とか"R10"とか"IC2"などの呼び名が
 格納されています。`gate`は複数の部品をひとかたまりにしたライブラリを使っているときの、
@@ -261,6 +278,8 @@ smashコマンドを使っている場合は`smashed`属性がyesになります
 | smashed   | _Bool_     | Optional | "no"    |
 | rot       | _Rotation_ | Optional | "R0"    |
 
+\\newpage
+
 ### .../sheet/buses {-}
 
 ### .../sheet/nets {-}
@@ -273,13 +292,15 @@ smashコマンドを使っている場合は`smashed`属性がyesになります
 |:------------|:-----------|
 | net         | 0~         |
 
-#### .../sheet/nets/net {-}
+### .../sheet/nets/net {-}
 
 [](data/eagle.dtd){.listingtable type=xml from=126 to=130}
 
 | Sub element | Appearance |
 |:------------|:-----------|
 | segment     | 0~         |
+
+\\newpage
 
 ## ライブラリ要素と直下の子要素たち
 
@@ -339,6 +360,8 @@ smashコマンドを使っている場合は`smashed`属性がyesになります
 
 ### .../library/devicesets/deviceset {-}
 
+\\newpage
+
 ## 各種図形要素たち
 
 ### .../sheet/.../polygon {-}
@@ -378,7 +401,7 @@ smashコマンドを使っている場合は`smashed`属性がyesになります
 ### .../sheet/.../wire {-}
 
 $(x1,y1)$と$(x2,y2)$を結ぶ線分要素です。線分は直線だけではなく弧を含みます。$curve>0$のとき始点から反時計回りの弧を描きます。
-$(x1,y1)=(0,0), (x2,y2)=(10,0),curve=180$なら*下に凸の半円*です。
+$(x1,y1)=(0,0), (x2,y2)=(10,0), curve=180$なら*下に凸の半円*です。
 
 [](data/eagle.dtd){.listingtable type=xml from=182 to=196}
 
