@@ -1,7 +1,7 @@
 ifeq ($(OS),Windows_NT)
 HOME = C:/Users/$(USERNAME)
 endif
-PANSTYLES= /var
+PANSTYLES= /usr/local/var
 MISC= $(PANSTYLES)/pandoc_misc
 include $(MISC)/Makefile.in
 PROJECT= `pwd`
@@ -11,12 +11,12 @@ PROJECT= `pwd`
 # DATADIR:= data
 # TARGETDIR:= Out
 # IMAGEDIR:= images
-# WAVEDIR:= waves
-# BITDIR:= bitfields
-# BIT16DIR:= bitfield16
 
 # CONFIG:= config.yaml
 # INPUT:= TITLE.md
-# TARGET:= TARGET
+# TARGET:= TARGET-$(DATE)-$(HASH)
+# REFERENCE:= $(MISC)/ref.docx
+# COREPROPFLAGS := --table "Normal Table=Centered"
+# COREPROPFLAGS += --paragraph "Normal=Body Text"
 ##
 include $(MISC)/Makefile
